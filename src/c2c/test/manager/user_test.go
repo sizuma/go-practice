@@ -16,8 +16,11 @@ func TestInsert(t *testing.T) {
 
 func TestFetchByID(t *testing.T) {
 	userManager := manager.EmptyInMemoryManager()
-	id := userManager.Insert("user001@test.com", "password")
-	if user := userManager.FetchByID(id); user != nil {
+	id, error := userManager.Insert("user001@test.com", "password")
+	if error != nil {
+		t.Fail()
+	}
+	if user, error := userManager.FetchByID(id); user != nil && error == nil {
 		if user.Email != "user001@test.com" || user.Password != "password" {
 			t.Fail()
 		}
@@ -28,8 +31,11 @@ func TestFetchByID(t *testing.T) {
 
 func TestFetchByMissingID(t *testing.T) {
 	userManager := manager.EmptyInMemoryManager()
-	id := userManager.Insert("user001@test.com", "password")
-	if user := userManager.FetchByID(id + 1); user != nil {
+	id, error := userManager.Insert("user001@test.com", "password")
+	if error != nil {
+		t.Fail()
+	}
+	if user, error := userManager.FetchByID(id + 1); user != nil && error != nil {
 		t.Errorf("expect nil but got %s", user)
 	}
 }
@@ -37,7 +43,7 @@ func TestFetchByMissingID(t *testing.T) {
 func TestFetchByEmail(t *testing.T) {
 	userManager := manager.EmptyInMemoryManager()
 	userManager.Insert("user001@test.com", "password")
-	if user := userManager.FetchByEmail("user001@test.com"); user != nil {
+	if user, error := userManager.FetchByEmail("user001@test.com"); user != nil && error == nil {
 		if user.Email != "user001@test.com" || user.Password != "password" {
 			t.Errorf("expect inserted user but got %s", user)
 		}
@@ -49,7 +55,7 @@ func TestFetchByEmail(t *testing.T) {
 func TestFetchByMissingEmail(t *testing.T) {
 	userManager := manager.EmptyInMemoryManager()
 	userManager.Insert("user001@test.com", "password")
-	if user := userManager.FetchByEmail(""); user != nil {
+	if user, error := userManager.FetchByEmail(""); user != nil && error != nil {
 		t.Errorf("expect nil but got %s", user)
 	}
 }

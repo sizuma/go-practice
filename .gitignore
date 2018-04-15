@@ -1,2 +1,3 @@
 bin/c2c
 pkg/
+src/c2c/resource/config.toml
